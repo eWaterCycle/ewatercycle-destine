@@ -41,8 +41,11 @@ sources["DestinEForcing"]        # gridded
 sources["DestinELumpedMakkinkForcing"]  # catchment-averaged
 ```
 
-`DestinELumpedMakkinkForcing` is a `LumpedMakkinkForcing`, so models that annotate their
-forcing with that type — HBV among them — accept it directly.
+Each is the Makkink forcing of its own shape — `DestinEForcing` is a
+`DistributedMakkinkForcing`, `DestinELumpedMakkinkForcing` is a
+`LumpedMakkinkForcing` — so models that annotate their forcing field with those
+types, HBV among them, accept them directly. They are siblings, not parent and
+child, so a model that wants a grid cannot be handed a catchment average.
 
 Two worked examples live in `docs/`:
 

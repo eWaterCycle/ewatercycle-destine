@@ -6,10 +6,14 @@ offer is described in :py:mod:`ewatercycle_destine.store`.
 """
 
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, Self
 
 import geopandas as gpd
-from ewatercycle._forcings.makkink import LumpedMakkinkForcing, et_makkink
+from ewatercycle._forcings.makkink import (
+    DistributedMakkinkForcing,
+    LumpedMakkinkForcing,
+    et_makkink,
+)
 from ewatercycle.base.forcing import DefaultForcing
 from ewatercycle.util import get_time
 
@@ -30,42 +34,14 @@ from ewatercycle_destine.store import (
 )
 
 
-class DestinEForcing(DefaultForcing):
-    """Distributed forcing from the DestinE Climate DT, via the Earth Data Hub.
+class _DestinEForcing(DefaultForcing):
+    """Shared implementation of the DestinE forcings.
 
-    Examples:
-        Gridded forcing for the Rhine over 2000, from the historical run:
-
-        .. code-block:: python
-
-            from pathlib import Path
-            from ewatercycle.forcing import sources
-
-            forcing = sources["DestinEForcing"].generate(
-                start_time="2000-01-01T00:00:00Z",
-                end_time="2000-12-31T00:00:00Z",
-                directory="./destine_rhine",
-                shape=Path("Rhine.shp"),
-                experiment="hist",
-            )
-
-        which gives something like:
-
-        .. code-block:: python
-
-            DestinEForcing(
-                start_time='2000-01-01T00:00:00Z',
-                end_time='2000-12-31T00:00:00Z',
-                directory=PosixPath('/home/mark/destine_rhine'),
-                shape=PosixPath('/home/mark/destine_rhine/Rhine.shp'),
-                filenames={
-                    'pr': 'DestinE_IFS-FESOM_hist_standard_day_pr_2000-01-01_2000-12-31.nc',
-                    'tas': 'DestinE_IFS-FESOM_hist_standard_day_tas_2000-01-01_2000-12-31.nc',
-                    'rsds': 'DestinE_IFS-FESOM_hist_standard_day_rsds_2000-01-01_2000-12-31.nc',
-                    'evspsblpot': 'DestinE_IFS-FESOM_hist_standard_day_evspsblpot_2000-01-01_2000-12-31.nc'
-                }
-            )
-    """  # noqa: E501
+    Not registered as a forcing source; use :py:class:`DestinEForcing` or
+    :py:class:`DestinELumpedMakkinkForcing`. Those two are siblings rather than
+    parent and child on purpose: each declares the Makkink forcing type that
+    matches its shape, and a lumped forcing must not pass as a distributed one.
+    """
 
     lumped: ClassVar[bool] = False
 
@@ -81,7 +57,7 @@ class DestinEForcing(DefaultForcing):
         experiment: str = "hist",
         variant: str = "standard",
         **kwargs,  # noqa: ARG003
-    ) -> "DestinEForcing":
+    ) -> Self:
         """Retrieve DestinE Climate DT forcing for a catchment.
 
         Args:
@@ -158,22 +134,70 @@ class DestinEForcing(DefaultForcing):
         return forcing
 
 
-# Both bases declare generate(); ours wins the MRO, which is the point.
-class DestinELumpedMakkinkForcing(DestinEForcing, LumpedMakkinkForcing):  # type: ignore[misc]
+# Both bases declare generate(); the one inherited from _DestinEForcing wins the
+# MRO, which is the point.
+class DestinEForcing(_DestinEForcing, DistributedMakkinkForcing):  # type: ignore[misc]
+    """Distributed forcing from the DestinE Climate DT, via the Earth Data Hub.
+
+    It is a
+    :py:class:`~ewatercycle._forcings.makkink.DistributedMakkinkForcing`: same
+    variables, same Makkink potential evaporation, different source. Models
+    annotate their forcing field with a concrete type and pydantic rejects
+    anything that is not an instance of it, so the relationship is declared
+    rather than left to be inferred.
+
+    Examples:
+        Gridded forcing for the Rhine over 2000, from the historical run:
+
+        .. code-block:: python
+
+            from pathlib import Path
+            from ewatercycle.forcing import sources
+
+            forcing = sources["DestinEForcing"].generate(
+                start_time="2000-01-01T00:00:00Z",
+                end_time="2000-12-31T00:00:00Z",
+                directory="./destine_rhine",
+                shape=Path("Rhine.shp"),
+                experiment="hist",
+            )
+
+        which gives something like:
+
+        .. code-block:: python
+
+            DestinEForcing(
+                start_time='2000-01-01T00:00:00Z',
+                end_time='2000-12-31T00:00:00Z',
+                directory=PosixPath('/home/mark/destine_rhine'),
+                shape=PosixPath('/home/mark/destine_rhine/Rhine.shp'),
+                filenames={
+                    'pr': 'DestinE_IFS-FESOM_hist_standard_day_pr_2000-01-01_2000-12-31.nc',
+                    'tas': 'DestinE_IFS-FESOM_hist_standard_day_tas_2000-01-01_2000-12-31.nc',
+                    'rsds': 'DestinE_IFS-FESOM_hist_standard_day_rsds_2000-01-01_2000-12-31.nc',
+                    'evspsblpot': 'DestinE_IFS-FESOM_hist_standard_day_evspsblpot_2000-01-01_2000-12-31.nc'
+                }
+            )
+    """  # noqa: E501
+
+    lumped: ClassVar[bool] = False
+
+
+class DestinELumpedMakkinkForcing(_DestinEForcing, LumpedMakkinkForcing):  # type: ignore[misc]
     """Catchment-averaged forcing from the DestinE Climate DT.
 
-    Identical to :py:class:`DestinEForcing`, except that the grid is reduced to
-    a single area-weighted catchment average, as lumped models expect.
+    The same data as :py:class:`DestinEForcing`, except that the grid is
+    reduced to a single area-weighted catchment average, as lumped models
+    expect.
 
-    It also *is* a
-    :py:class:`~ewatercycle._forcings.makkink.LumpedMakkinkForcing`: the
-    variables and the Makkink potential evaporation are the same, only the
-    source differs. Models annotate their forcing field with that type -- HBV,
-    for one, accepts ``LumpedMakkinkForcing | CaravanForcing`` -- and pydantic
-    rejects anything that is not an instance of it, so the relationship has to
-    be declared rather than merely implied. ``generate`` still resolves to
-    :py:meth:`DestinEForcing.generate`; nothing from the ESMValTool recipe
-    machinery is used.
+    It is a :py:class:`~ewatercycle._forcings.makkink.LumpedMakkinkForcing`:
+    same variables, same Makkink potential evaporation, different source.
+    Models annotate their forcing field with that type -- HBV, for one, accepts
+    ``LumpedMakkinkForcing | CaravanForcing`` -- and pydantic rejects anything
+    that is not an instance of it, so the relationship has to be declared
+    rather than merely implied. It is deliberately *not* a
+    :py:class:`~ewatercycle._forcings.makkink.DistributedMakkinkForcing`, so a
+    model that wants a grid cannot be handed a catchment average by mistake.
 
     Examples:
         Lumped forcing for the Rhine over 2000, from the historical run:

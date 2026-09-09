@@ -5,7 +5,11 @@ import shutil
 import pytest
 import xarray as xr
 from conftest import SDSWRF_VALUE, TAS_VALUE, TPRATE_VALUE
-from ewatercycle.forcing import CaravanForcing, LumpedMakkinkForcing
+from ewatercycle.forcing import (
+    CaravanForcing,
+    DistributedMakkinkForcing,
+    LumpedMakkinkForcing,
+)
 from pydantic import BaseModel
 
 import ewatercycle_destine.forcing as forcing_module
@@ -192,8 +196,32 @@ def test_shape_is_copied_next_to_the_data(lumped_forcing, tmp_path):
     assert lumped_forcing.get_shape_area() > 0
 
 
-def test_lumped_forcing_is_a_makkink_forcing():
+def test_each_class_is_the_makkink_forcing_of_its_own_shape():
     assert issubclass(DestinELumpedMakkinkForcing, LumpedMakkinkForcing)
+    assert issubclass(DestinEForcing, DistributedMakkinkForcing)
+
+
+def test_a_lumped_forcing_cannot_pass_as_a_distributed_one():
+    """A model that wants a grid must not be handed a catchment average."""
+    assert not issubclass(DestinELumpedMakkinkForcing, DistributedMakkinkForcing)
+    assert not issubclass(DestinEForcing, LumpedMakkinkForcing)
+
+
+def test_distributed_forcing_is_accepted_where_models_expect_makkink(
+    tmp_path, rhine, opened_stores
+):
+    class ModelWantingAGrid(BaseModel):
+        forcing: DistributedMakkinkForcing
+
+    forcing = DestinEForcing.generate(
+        start_time=START,
+        end_time=END,
+        directory=tmp_path,
+        shape=rhine,
+        variables=("pr",),
+    )
+
+    assert ModelWantingAGrid(forcing=forcing).forcing.filenames == forcing.filenames
 
 
 def test_lumped_forcing_is_accepted_where_models_expect_makkink(lumped_forcing):
