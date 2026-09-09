@@ -75,7 +75,9 @@ def get_credentials(host: str = EDH_HOST) -> tuple[str, str]:
         f"~/.netrc file:\n"
         f"    machine {host}\n"
         f"        login {DEFAULT_LOGIN}\n"
-        f"        password <your-api-key>"
+        f"        password <your-api-key>\n"
+        f"\nA .env file is not read automatically. If you keep the key there, "
+        f"load it first, for example with python-dotenv's load_dotenv()."
     )
     raise MissingApiKeyError(msg)
 
