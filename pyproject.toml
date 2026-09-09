@@ -95,7 +95,9 @@ ignore = [
 "tests/**/*" = ["ARG", "D", "E501", "S101"]
 "scripts/**/*" = ["T201"]
 # Notebooks print and show long lines; that is what they are for.
-"docs/**/*.ipynb" = ["A004", "E402", "E501", "I001", "T201"]
+# Notebooks print, wrap long, and catch broadly when falling back from a
+# cached load to a slow regeneration.
+"docs/**/*.ipynb" = ["A004", "BLE001", "E402", "E501", "I001", "T201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
