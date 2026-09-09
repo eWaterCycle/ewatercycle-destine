@@ -41,6 +41,9 @@ sources["DestinEForcing"]        # gridded
 sources["DestinELumpedForcing"]  # catchment-averaged
 ```
 
+`DestinELumpedForcing` is a `LumpedMakkinkForcing`, so models that annotate their
+forcing with that type — HBV among them — accept it directly.
+
 A worked end-to-end example lives in
 [`docs/destine_forcing.ipynb`](docs/destine_forcing.ipynb).
 

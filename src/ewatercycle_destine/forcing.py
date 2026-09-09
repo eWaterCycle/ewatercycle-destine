@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import ClassVar
 
 import geopandas as gpd
-from ewatercycle._forcings.makkink import et_makkink
+from ewatercycle._forcings.makkink import LumpedMakkinkForcing, et_makkink
 from ewatercycle.base.forcing import DefaultForcing
 from ewatercycle.util import get_time
 
@@ -158,11 +158,22 @@ class DestinEForcing(DefaultForcing):
         return forcing
 
 
-class DestinELumpedForcing(DestinEForcing):
+# Both bases declare generate(); ours wins the MRO, which is the point.
+class DestinELumpedForcing(DestinEForcing, LumpedMakkinkForcing):  # type: ignore[misc]
     """Catchment-averaged forcing from the DestinE Climate DT.
 
     Identical to :py:class:`DestinEForcing`, except that the grid is reduced to
     a single area-weighted catchment average, as lumped models expect.
+
+    It also *is* a
+    :py:class:`~ewatercycle._forcings.makkink.LumpedMakkinkForcing`: the
+    variables and the Makkink potential evaporation are the same, only the
+    source differs. Models annotate their forcing field with that type -- HBV,
+    for one, accepts ``LumpedMakkinkForcing | CaravanForcing`` -- and pydantic
+    rejects anything that is not an instance of it, so the relationship has to
+    be declared rather than merely implied. ``generate`` still resolves to
+    :py:meth:`DestinEForcing.generate`; nothing from the ESMValTool recipe
+    machinery is used.
 
     Examples:
         Lumped forcing for the Rhine over 2000, from the historical run:

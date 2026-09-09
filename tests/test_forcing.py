@@ -5,6 +5,8 @@ import shutil
 import pytest
 import xarray as xr
 from conftest import SDSWRF_VALUE, TAS_VALUE, TPRATE_VALUE
+from ewatercycle.forcing import CaravanForcing, LumpedMakkinkForcing
+from pydantic import BaseModel
 
 import ewatercycle_destine.forcing as forcing_module
 from ewatercycle_destine.forcing import DestinEForcing, DestinELumpedForcing
@@ -188,3 +190,22 @@ def test_forcing_directory_can_be_moved(lumped_forcing, tmp_path):
 def test_shape_is_copied_next_to_the_data(lumped_forcing, tmp_path):
     assert lumped_forcing.shape == tmp_path / "Rhine.shp"
     assert lumped_forcing.get_shape_area() > 0
+
+
+def test_lumped_forcing_is_a_makkink_forcing():
+    assert issubclass(DestinELumpedForcing, LumpedMakkinkForcing)
+
+
+def test_lumped_forcing_is_accepted_where_models_expect_makkink(lumped_forcing):
+    """HBV, and models like it, annotate the field with a union of types.
+
+    Pydantic rejects anything that is not an instance of one of them, so a
+    forcing that merely looks like a lumped Makkink forcing is not enough.
+    """
+
+    class ModelLikeHBV(BaseModel):
+        forcing: LumpedMakkinkForcing | CaravanForcing
+
+    model = ModelLikeHBV(forcing=lumped_forcing)
+
+    assert model.forcing.filenames == lumped_forcing.filenames
