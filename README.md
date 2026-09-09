@@ -41,6 +41,9 @@ sources["DestinEForcing"]        # gridded
 sources["DestinELumpedForcing"]  # catchment-averaged
 ```
 
+A worked end-to-end example lives in
+[`docs/destine_forcing.ipynb`](docs/destine_forcing.ipynb).
+
 ## Choosing a store
 
 A store is addressed by three keys:

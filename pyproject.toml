@@ -45,6 +45,7 @@ dev = [
   "pytest",
   "ruff",
   "mypy",
+  "jupyter",
 ]
 
 # This registers the plugin such that it is discoverable by eWaterCycle
@@ -93,6 +94,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*" = ["ARG", "D", "E501", "S101"]
 "scripts/**/*" = ["T201"]
+# Notebooks print and show long lines; that is what they are for.
+"docs/**/*.ipynb" = ["E501", "T201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
