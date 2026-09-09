@@ -22,12 +22,11 @@ from ewatercycle_destine.processing import (
 )
 from ewatercycle_destine.store import (
     ATTRIBUTES,
-    CMOR_NAMES,
-    COORDINATE_NAMES,
     DEFAULT_VARIABLES,
     STORE_NAMES,
     open_store,
     resolve_variables,
+    to_cmor_names,
 )
 
 
@@ -113,17 +112,15 @@ class DestinEForcing(DefaultForcing):
 
         ds = open_store(model, experiment, variant)
         ds = ds[[STORE_NAMES[variable] for variable in sorted(needed)]]
-        renames = {**CMOR_NAMES, **COORDINATE_NAMES}
-        ds = ds.rename(
-            {old: new for old, new in renames.items() if old in ds.variables}
-        )
+        ds = to_cmor_names(ds)
         ds = crop_time(ds, start_time, end_time)
         ds = crop_to_bbox(ds, tuple(gdf.total_bounds))
         ds = clip_to_shape(ds, gdf)
 
         # Reduce space before time: same result, far less data to resample.
         if cls.lumped:
-            ds = spatial_mean(ds)
+            centroid = gdf.geometry.union_all().centroid
+            ds = spatial_mean(ds).assign_coords(lat=centroid.y, lon=centroid.x)
         ds = to_daily(ds).compute()
 
         for variable in ds.data_vars:
@@ -141,6 +138,8 @@ class DestinEForcing(DefaultForcing):
         filenames = {
             variable: f"{prefix}_{variable}_{period}.nc" for variable in variables
         }
+        # spatial_ref is rioxarray's bookkeeping, not part of the forcing.
+        ds = ds.drop_vars("spatial_ref", errors="ignore")
         for variable, filename in filenames.items():
             ds[variable].to_netcdf(directory / filename)
 
@@ -152,6 +151,10 @@ class DestinEForcing(DefaultForcing):
             filenames=filenames,
         )
         forcing.save()
+        # save() copies the shapefile into the directory; point at that copy so
+        # the object matches what load() returns and the directory stands alone.
+        if forcing.shape is not None and not forcing.shape.is_relative_to(directory):
+            forcing.shape = directory / forcing.shape.name
         return forcing
 
 

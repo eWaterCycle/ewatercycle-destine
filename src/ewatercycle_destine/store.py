@@ -72,8 +72,11 @@ DERIVED_FROM = {"evspsblpot": ("tas", "rsds")}
 
 DEFAULT_VARIABLES = ("pr", "tas", "rsds", "evspsblpot")
 
-LAT, LON = "latitude", "longitude"
-COORDINATE_NAMES = {"lat": LAT, "lon": LON}
+# The stores use latitude/longitude; CMOR, and so the rest of eWaterCycle,
+# uses lat/lon. ewatercycle.util.merge_esvmaltool_datasets, which backs
+# DefaultForcing.to_xarray(), insists on the CMOR names.
+LAT, LON = "lat", "lon"
+COORDINATE_NAMES = {"latitude": LAT, "longitude": LON}
 
 
 def store_url(model: str, experiment: str, variant: str) -> str:
@@ -156,3 +159,16 @@ def resolve_variables(variables: tuple[str, ...], variant: str) -> set[str]:
         )
         raise ValueError(msg)
     return needed
+
+
+def to_cmor_names(ds: xr.Dataset) -> xr.Dataset:
+    """Rename a store's variables and coordinates to their CMOR names.
+
+    Args:
+        ds: Dataset as opened from the store.
+
+    Returns:
+        The dataset, with whichever of the known names it carried renamed.
+    """
+    renames = {**CMOR_NAMES, **COORDINATE_NAMES}
+    return ds.rename({old: new for old, new in renames.items() if old in ds.variables})
