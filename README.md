@@ -24,6 +24,19 @@ machine api.earthdatahub.destine.eu
     password <your-api-key>
 ```
 
+If you would rather keep the key in a `.env` file, `scripts/setup_env.py` writes
+one for you, leaves an existing key alone, and can ask the Hub whether the key is
+actually accepted:
+
+```console
+python scripts/setup_env.py            # prompts if there is no key yet
+python scripts/setup_env.py --check    # and verify it against Earth Data Hub
+```
+
+Note that the library itself never reads `.env` — it looks at `EDH_API_KEY` and
+then at `~/.netrc` — so a `.env` still has to be loaded by whatever runs your
+code. The script prints the usual ways.
+
 ## Installation
 
 Install alongside your eWaterCycle installation:
