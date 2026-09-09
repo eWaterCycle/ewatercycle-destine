@@ -1,0 +1,41 @@
+name: Python package
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Run tests in mamba environment
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download conda lock file
+        run: wget https://raw.githubusercontent.com/eWaterCycle/ewatercycle/main/conda-lock.yml
+
+      - uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-file: conda-lock.yml
+          environment-name: ci
+          cache-environment: true
+          init-shell: bash
+
+      - name: Install dependencies
+        shell: micromamba-shell {0}
+        run: |
+          pip3 install -e .[dev]
+
+      - name: Lint with ruff
+        shell: micromamba-shell {0}
+        run: ruff check
+
+      - name: Type check with mypy
+        shell: micromamba-shell {0}
+        run: mypy
+
+      - name: Test with pytest
+        shell: micromamba-shell {0}
+        run: pytest

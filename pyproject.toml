@@ -10,6 +10,7 @@ name = "ewatercycle-destine"
 description = "eWaterCycle plugin for using DestinE digital twin data."
 readme = "README.md"
 license = "Apache-2.0"
+requires-python = ">=3.11"
 authors = [
   { name = "Mark Melotto", email = "markmelotto@tudelft.nl" },
 ]
@@ -23,12 +24,80 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
 ]
 
-# Include here only the dependencies for the eWaterCycle wrapped model
 dependencies = [
-  "ewatercycle>=2.1.0",
+  "ewatercycle>=2.5.0",
+  # The Earth Data Hub stores are zarr v3, which needs zarr-python 3.
+  "zarr>=3",
+  "xarray>=2024.10",
+  "dask",
+  "fsspec",
+  "aiohttp",
+  "numpy",
+  "pandas",
+  "geopandas",
+  "rioxarray",
+  "netCDF4",
 ]
 dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "ruff",
+  "mypy",
+]
 
 # This registers the plugin such that it is discoverable by eWaterCycle
 [project.entry-points."ewatercycle.forcings"]
 DestinEForcing = "ewatercycle_destine.forcing:DestinEForcing"
+DestinELumpedForcing = "ewatercycle_destine.forcing:DestinELumpedForcing"
+
+[project.urls]
+homepage = "https://github.com/eWaterCycle/ewatercycle-destine/"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "integration: hits the real Earth Data Hub store, needs an API key (deselected by default)",
+]
+addopts = "-m 'not integration'"
+
+[tool.mypy]
+plugins = ["pydantic.mypy", "numpy.typing.mypy_plugin"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+check_untyped_defs = true
+files = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "A", "ARG", "B", "BLE", "C", "D", "DTZ", "E", "EM", "ERA", "F", "FURB", "I",
+    "ICN", "ISC", "LOG", "N", "PD", "PERF", "PGH", "PLC", "PLE", "PTH", "PLW",
+    "Q", "RET", "RSE", "RUF", "S", "SLOT", "SIM", "T", "TCH", "TID", "TRY", "UP",
+    "W", "YTT",
+]
+ignore = [
+    # Conflicts with formatting
+    "ISC001",
+    # Conflicts with default rules
+    "PLC0414",
+    # Misidentifies xarray.DataArray as pandas.DataFrame
+    "PD003",
+    # Conflicts with typing
+    "PLC0207",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = ["ARG", "D", "E501", "DTZ001", "N802", "S101", "PLR2004"]
+"scripts/**/*" = ["T201"]
+# Generated table of ECMWF parameters; some names are simply long.
+"src/ewatercycle_destine/destine_parameters.py" = ["E501"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["ewatercycle_destine"]
