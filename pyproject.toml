@@ -37,6 +37,7 @@ dependencies = [
   "geopandas",
   "rioxarray",
   "netCDF4",
+  "pytest",
 ]
 dynamic = ["version"]
 
