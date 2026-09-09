@@ -1,4 +1,8 @@
-# eWaterCycle plugin example: a leaky bucket model
+# eWaterCycle plugin destinE
+
+## Prerequisites
+
+User needs to have an account with DestinE with the Data Access Policy upgrade.
 
 
 ## Installation
@@ -12,7 +16,7 @@ pip install ewatercycle-destine
 Then LeakyBucket becomes available as one of the eWaterCycle models
 
 ```python
-from ewatercycle.models import LeakyBucket
+from ewatercycle.forcing import DestinE
 ```
 
 ## Implementing your own model
