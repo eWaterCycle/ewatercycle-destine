@@ -237,3 +237,29 @@ def test_lumped_forcing_is_accepted_where_models_expect_makkink(lumped_forcing):
     model = ModelLikeHBV(forcing=lumped_forcing)
 
     assert model.forcing.filenames == lumped_forcing.filenames
+
+
+def test_relative_directory_still_gives_absolute_paths(
+    tmp_path, rhine, opened_stores, monkeypatch
+):
+    """A relative directory= left shape relative, so it broke once you moved.
+
+    DefaultForcing makes self.directory absolute, but generate() compared the
+    shape against the caller's argument instead, so a relative one there was
+    carried into the object.
+    """
+    monkeypatch.chdir(tmp_path)
+
+    forcing = DestinELumpedMakkinkForcing.generate(
+        start_time=START,
+        end_time=END,
+        directory="output",
+        shape=rhine,
+        variables=("pr",),
+    )
+
+    assert forcing.directory.is_absolute()
+    assert forcing.shape is not None
+    assert forcing.shape.is_absolute()
+    assert forcing.shape == tmp_path / "output" / "Rhine.shp"
+    assert forcing.get_shape_area() > 0

@@ -129,8 +129,13 @@ class _DestinEForcing(DefaultForcing):
         forcing.save()
         # save() copies the shapefile into the directory; point at that copy so
         # the object matches what load() returns and the directory stands alone.
-        if forcing.shape is not None and not forcing.shape.is_relative_to(directory):
-            forcing.shape = directory / forcing.shape.name
+        # Compare against forcing.directory, which pydantic has made absolute:
+        # `directory` is whatever the caller passed, and a relative one there
+        # left forcing.shape relative too.
+        if forcing.shape is not None and not forcing.shape.is_relative_to(
+            forcing.directory
+        ):
+            forcing.shape = forcing.directory / forcing.shape.name
         return forcing
 
 
