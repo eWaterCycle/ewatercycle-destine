@@ -44,8 +44,12 @@ sources["DestinELumpedMakkinkForcing"]  # catchment-averaged
 `DestinELumpedMakkinkForcing` is a `LumpedMakkinkForcing`, so models that annotate their
 forcing with that type — HBV among them — accept it directly.
 
-A worked end-to-end example lives in
-[`docs/destine_forcing.ipynb`](docs/destine_forcing.ipynb).
+Two worked examples live in `docs/`:
+
+* [`destine_forcing.ipynb`](docs/destine_forcing.ipynb) — the plugin end to end,
+  lumped and distributed, historical and scenario.
+* [`forcings_with_hbv.ipynb`](docs/forcings_with_hbv.ipynb) — the same HBV run on
+  Caravan, ERA5, ERA5-Land and DestinE forcing, side by side.
 
 ## Choosing a store
 
