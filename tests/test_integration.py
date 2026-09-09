@@ -9,7 +9,7 @@ API key in ``EDH_API_KEY`` or ``~/.netrc``::
 import pytest
 
 from ewatercycle_destine.auth import MissingApiKeyError, get_credentials
-from ewatercycle_destine.forcing import DestinELumpedForcing
+from ewatercycle_destine.forcing import DestinELumpedMakkinkForcing
 from ewatercycle_destine.store import open_store
 
 pytestmark = pytest.mark.integration
@@ -24,7 +24,7 @@ def _needs_api_key():
 
 
 def test_generate_from_the_real_store(tmp_path, rhine):
-    forcing = DestinELumpedForcing.generate(
+    forcing = DestinELumpedMakkinkForcing.generate(
         start_time="2000-06-01T00:00:00Z",
         end_time="2000-06-03T23:00:00Z",
         directory=tmp_path,
@@ -44,7 +44,7 @@ def test_generate_from_the_real_store(tmp_path, rhine):
     assert 0 <= float(ds["pr"].mean()) < 1e-3
     assert 50 < float(ds["rsds"].mean()) < 500
 
-    assert DestinELumpedForcing.load(tmp_path) == forcing
+    assert DestinELumpedMakkinkForcing.load(tmp_path) == forcing
 
 
 def test_store_layout_matches_what_the_code_assumes():

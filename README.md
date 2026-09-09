@@ -38,10 +38,10 @@ Two forcing sources then become available:
 from ewatercycle.forcing import sources
 
 sources["DestinEForcing"]        # gridded
-sources["DestinELumpedForcing"]  # catchment-averaged
+sources["DestinELumpedMakkinkForcing"]  # catchment-averaged
 ```
 
-`DestinELumpedForcing` is a `LumpedMakkinkForcing`, so models that annotate their
+`DestinELumpedMakkinkForcing` is a `LumpedMakkinkForcing`, so models that annotate their
 forcing with that type — HBV among them — accept it directly.
 
 A worked end-to-end example lives in
@@ -83,7 +83,7 @@ For a catchment-averaged time series, area-weighted by cos(latitude):
 from pathlib import Path
 from ewatercycle.forcing import sources
 
-forcing = sources["DestinELumpedForcing"].generate(
+forcing = sources["DestinELumpedMakkinkForcing"].generate(
     start_time="2000-01-01T00:00:00Z",
     end_time="2000-12-31T00:00:00Z",
     directory="./forcing/rhine_lumped",
@@ -124,7 +124,7 @@ copies the shapefile in, all referenced by name. The directory can be moved or
 shared, and read back with:
 
 ```python
-forcing = sources["DestinELumpedForcing"].load("./forcing/rhine_lumped")
+forcing = sources["DestinELumpedMakkinkForcing"].load("./forcing/rhine_lumped")
 ```
 
 ## Development

@@ -159,7 +159,7 @@ class DestinEForcing(DefaultForcing):
 
 
 # Both bases declare generate(); ours wins the MRO, which is the point.
-class DestinELumpedForcing(DestinEForcing, LumpedMakkinkForcing):  # type: ignore[misc]
+class DestinELumpedMakkinkForcing(DestinEForcing, LumpedMakkinkForcing):  # type: ignore[misc]
     """Catchment-averaged forcing from the DestinE Climate DT.
 
     Identical to :py:class:`DestinEForcing`, except that the grid is reduced to
@@ -183,7 +183,7 @@ class DestinELumpedForcing(DestinEForcing, LumpedMakkinkForcing):  # type: ignor
             from pathlib import Path
             from ewatercycle.forcing import sources
 
-            forcing = sources["DestinELumpedForcing"].generate(
+            forcing = sources["DestinELumpedMakkinkForcing"].generate(
                 start_time="2000-01-01T00:00:00Z",
                 end_time="2000-12-31T00:00:00Z",
                 directory="./destine_rhine_lumped",

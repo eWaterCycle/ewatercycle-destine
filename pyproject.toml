@@ -51,7 +51,7 @@ dev = [
 # This registers the plugin such that it is discoverable by eWaterCycle
 [project.entry-points."ewatercycle.forcings"]
 DestinEForcing = "ewatercycle_destine.forcing:DestinEForcing"
-DestinELumpedForcing = "ewatercycle_destine.forcing:DestinELumpedForcing"
+DestinELumpedMakkinkForcing = "ewatercycle_destine.forcing:DestinELumpedMakkinkForcing"
 
 [project.urls]
 homepage = "https://github.com/eWaterCycle/ewatercycle-destine/"

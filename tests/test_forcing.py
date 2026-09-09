@@ -9,7 +9,7 @@ from ewatercycle.forcing import CaravanForcing, LumpedMakkinkForcing
 from pydantic import BaseModel
 
 import ewatercycle_destine.forcing as forcing_module
-from ewatercycle_destine.forcing import DestinEForcing, DestinELumpedForcing
+from ewatercycle_destine.forcing import DestinEForcing, DestinELumpedMakkinkForcing
 
 START = "2000-01-01T00:00:00Z"
 END = "2000-01-03T23:00:00Z"
@@ -30,7 +30,7 @@ def opened_stores(monkeypatch, synthetic_store):
 
 @pytest.fixture
 def lumped_forcing(tmp_path, rhine, opened_stores):
-    return DestinELumpedForcing.generate(
+    return DestinELumpedMakkinkForcing.generate(
         start_time=START, end_time=END, directory=tmp_path, shape=rhine
     )
 
@@ -82,7 +82,7 @@ def test_hourly_data_is_aggregated_to_daily(lumped_forcing):
 
 
 def test_variables_are_honoured(tmp_path, rhine, opened_stores):
-    forcing = DestinELumpedForcing.generate(
+    forcing = DestinELumpedMakkinkForcing.generate(
         start_time=START,
         end_time=END,
         directory=tmp_path,
@@ -97,7 +97,7 @@ def test_variables_are_honoured(tmp_path, rhine, opened_stores):
 
 def test_derived_variables_pull_in_what_they_need(tmp_path, rhine, opened_stores):
     """evspsblpot needs tas and rsds, but only evspsblpot was asked for."""
-    forcing = DestinELumpedForcing.generate(
+    forcing = DestinELumpedMakkinkForcing.generate(
         start_time=START,
         end_time=END,
         directory=tmp_path,
@@ -118,7 +118,7 @@ def test_variant_without_radiation_is_refused(
     tmp_path, rhine, opened_stores, variable
 ):
     with pytest.raises(ValueError, match="variant='standard'"):
-        DestinELumpedForcing.generate(
+        DestinELumpedMakkinkForcing.generate(
             start_time=START,
             end_time=END,
             directory=tmp_path,
@@ -171,7 +171,7 @@ def test_saved_yaml_holds_no_absolute_paths(lumped_forcing, tmp_path):
 
 
 def test_round_trip(lumped_forcing, tmp_path):
-    reloaded = DestinELumpedForcing.load(tmp_path)
+    reloaded = DestinELumpedMakkinkForcing.load(tmp_path)
     assert reloaded == lumped_forcing
 
 
@@ -179,7 +179,7 @@ def test_forcing_directory_can_be_moved(lumped_forcing, tmp_path):
     elsewhere = tmp_path.parent / "moved"
     shutil.copytree(tmp_path, elsewhere)
 
-    reloaded = DestinELumpedForcing.load(elsewhere)
+    reloaded = DestinELumpedMakkinkForcing.load(elsewhere)
 
     assert reloaded.directory == elsewhere
     assert reloaded["pr"].is_file()
@@ -193,7 +193,7 @@ def test_shape_is_copied_next_to_the_data(lumped_forcing, tmp_path):
 
 
 def test_lumped_forcing_is_a_makkink_forcing():
-    assert issubclass(DestinELumpedForcing, LumpedMakkinkForcing)
+    assert issubclass(DestinELumpedMakkinkForcing, LumpedMakkinkForcing)
 
 
 def test_lumped_forcing_is_accepted_where_models_expect_makkink(lumped_forcing):
