@@ -1,17 +1,12 @@
 # eWaterCycle plugin example: a leaky bucket model
 
-This repository is a template for adding models to eWatercycle, and will guide you through all required steps.
-
-As an example this plugin adds the ["leakybucket" model](https://github.com/eWaterCycle/leakybucket-bmi). 
-
-To use the template, press the green "Use this template" button on GitHub, and replace all instances of "leakybucket"/"LeakyBucket" with your model name.
 
 ## Installation
 
 Install this package alongside your eWaterCycle installation
 
 ```console
-pip install ewatercycle-leakybucket
+pip install ewatercycle-destine
 ```
 
 Then LeakyBucket becomes available as one of the eWaterCycle models
@@ -22,7 +17,6 @@ from ewatercycle.models import LeakyBucket
 
 ## Implementing your own model
 
-For more information on how this plugin works, and on how to implement your own model see the [plugin guide](plugin_guide.md)
 
 ## License
 

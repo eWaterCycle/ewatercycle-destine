@@ -3,15 +3,15 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "src/ewatercycle_leakybucket/__init__.py"
+path = "src/ewatercycle_destine/__init__.py"
 
 [project]
-name = "ewatercycle-leakybucket"
-description = "Template project for starting a new eWaterCycle plugin"
+name = "ewatercycle-destine"
+description = "eWaterCycle plugin for using DestinE digital twin data."
 readme = "README.md"
 license = "Apache-2.0"
 authors = [
-  { name = "Bart Schilperoort, Peter Kalverla, Stefan Verhoeven", email = "b.schilperoort@esciencecenter.nl" },
+  { name = "Mark Melotto", email = "markmelotto@tudelft.nl" },
 ]
 keywords = ["ewatercycle", "hydrology"]
 classifiers = [
@@ -30,5 +30,5 @@ dependencies = [
 dynamic = ["version"]
 
 # This registers the plugin such that it is discoverable by eWaterCycle
-[project.entry-points."ewatercycle.models"]
-LeakyBucket = "ewatercycle_leakybucket.model:LeakyBucket"
+[project.entry-points."ewatercycle.forcings"]
+DestinEForcing = "ewatercycle_destine.forcing:DestinEForcing"
