@@ -7,7 +7,6 @@ API key in ``EDH_API_KEY`` or ``~/.netrc``::
 """
 
 import pytest
-import xarray as xr
 
 from ewatercycle_destine.auth import MissingApiKeyError, get_credentials
 from ewatercycle_destine.forcing import DestinELumpedForcing
@@ -55,4 +54,3 @@ def test_store_layout_matches_what_the_code_assumes():
     assert {"t2m", "avg_tprate", "avg_sdswrf"} <= set(ds.data_vars)
     assert {"time", "latitude", "longitude"} <= set(ds.dims)
     assert float(ds["longitude"].max()) <= 180.0
-    assert isinstance(ds, xr.Dataset)

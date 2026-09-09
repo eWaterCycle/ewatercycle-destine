@@ -25,16 +25,9 @@ from typing import Any
 import aiohttp
 
 EDH_HOST = "api.earthdatahub.destine.eu"
-"""Host serving the Earth Data Hub zarr stores."""
-
 API_KEY_VARIABLE = "EDH_API_KEY"
-"""Environment variable holding the Earth Data Hub API key."""
-
 DEFAULT_LOGIN = "edh"
-"""Basic-auth username that Earth Data Hub expects alongside the API key."""
-
 API_KEY_PAGE = "https://platform.destine.eu/ (Menu > Quota & API Keys)"
-"""Where a user can find their API key."""
 
 
 class MissingApiKeyError(RuntimeError):

@@ -109,10 +109,7 @@ def store_url(model: str, experiment: str, variant: str) -> str:
 def open_store(model: str, experiment: str, variant: str) -> xr.Dataset:
     """Lazily open a Climate DT zarr store on the Earth Data Hub.
 
-    Args:
-        model: One of :py:data:`MODELS`.
-        experiment: One of :py:data:`EXPERIMENTS`.
-        variant: One of :py:data:`VARIANTS`.
+    Takes the same keys as :py:func:`store_url`.
 
     Returns:
         The whole (global, hourly) store, opened lazily.
