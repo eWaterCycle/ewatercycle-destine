@@ -5,6 +5,9 @@ Forcing for [eWaterCycle](https://github.com/eWaterCycle/ewatercycle) from the
 the zarr stores that the [Earth Data Hub](https://earthdatahub.destine.eu/catalogue)
 serves.
 
+> [!NOTE]
+> DestinE, as of now, does not work together with ESMValTool; meaning that WflowForcing does not work with DestinE immediately.
+
 ## Prerequisites
 
 A DestinE account with the Data Access Policy upgrade, and an Earth Data Hub
