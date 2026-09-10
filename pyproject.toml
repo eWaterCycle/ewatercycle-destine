@@ -10,7 +10,7 @@ name = "ewatercycle-destine"
 description = "eWaterCycle plugin for using DestinE digital twin data."
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 authors = [
   { name = "Mark Melotto", email = "markmelotto@tudelft.nl" },
 ]
@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ewatercycle>=2.5.0",
+  "ewatercycle>=2.6.0",
   # The Earth Data Hub stores are zarr v3, which needs zarr-python 3.
   "zarr>=3",
   "xarray>=2024.10",
