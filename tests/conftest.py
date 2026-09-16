@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import xarray as xr
-from ewatercycle.testing.fixtures import rhine_shape
+from ewatercycle.testing import rhine_shape
 
 # Constant values, so any rescaling shows up as an exact mismatch.
 TAS_VALUE = 283.15  # K
