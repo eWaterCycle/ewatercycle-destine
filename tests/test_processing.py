@@ -48,8 +48,12 @@ def test_crop_to_bbox_covers_the_catchment(descending):
 
 
 def test_crop_to_bbox_keeps_the_stores_latitude_order():
-    descending = crop_to_bbox(to_cmor_names(make_store(descending_latitude=True)), RHINE_BOUNDS)
-    ascending = crop_to_bbox(to_cmor_names(make_store(descending_latitude=False)), RHINE_BOUNDS)
+    descending = crop_to_bbox(
+        to_cmor_names(make_store(descending_latitude=True)), RHINE_BOUNDS
+    )
+    ascending = crop_to_bbox(
+        to_cmor_names(make_store(descending_latitude=False)), RHINE_BOUNDS
+    )
 
     assert descending["lat"][0] > descending["lat"][-1]
     assert ascending["lat"][0] < ascending["lat"][-1]
@@ -117,7 +121,9 @@ def test_clip_to_shape_keeps_sub_cell_catchments(rhine):
     # A catchment smaller than one grid cell: without all_touched=True this
     # comes back empty.
     gdf = gpd.read_file(rhine).to_crs("EPSG:4326")
-    tiny = gpd.GeoDataFrame(geometry=[gdf.geometry.iloc[0].centroid.buffer(0.01)], crs=gdf.crs)
+    tiny = gpd.GeoDataFrame(
+        geometry=[gdf.geometry.iloc[0].centroid.buffer(0.01)], crs=gdf.crs
+    )
     ds = crop_to_bbox(
         to_cmor_names(make_store(days=1, resolution=2.0)), tuple(tiny.total_bounds)
     )

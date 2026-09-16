@@ -53,10 +53,7 @@ def describe(model: str, experiment: str, variant: str) -> None:
         if name in ds.coords:
             values = ds[name].to_numpy()
             order = "descending" if values[0] > values[-1] else "ascending"
-            print(
-                f"    {name}: {values[0]} .. {values[-1]} "
-                f"({order}, n={values.size})"
-            )
+            print(f"    {name}: {values[0]} .. {values[-1]} ({order}, n={values.size})")
     for name in ("longitude", "lon"):
         if name in ds.coords:
             values = ds[name].to_numpy()
@@ -64,8 +61,7 @@ def describe(model: str, experiment: str, variant: str) -> None:
     if "time" in ds.coords:
         time = ds["time"]
         print(
-            f"    time: {time[0].to_numpy()} .. {time[-1].to_numpy()} "
-            f"(n={time.size})"
+            f"    time: {time[0].to_numpy()} .. {time[-1].to_numpy()} (n={time.size})"
         )
 
 

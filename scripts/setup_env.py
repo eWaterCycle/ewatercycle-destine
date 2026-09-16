@@ -229,24 +229,8 @@ def main(argv: list[str] | None = None) -> int:
     if existing is not None and not args.force:
         return check_existing(existing, args.path, args.check)
 
-    key = args.key or os.environ.get(API_KEY_VARIABLE) or ""
-    if key:
-        source = "--key" if args.key else f"the {API_KEY_VARIABLE} environment variable"
-        print(f"Taking the key from {source}.")
-    elif sys.stdin.isatty():
-        print(f"No key found. Get one from {API_KEY_PAGE}")
-        key = getpass("Earth Data Hub API key (not echoed): ")
-    else:
-        print(
-            f"No key available. Pass --key, or set {API_KEY_VARIABLE}, or run this "
-            f"from a terminal so it can prompt.\nGet a key from {API_KEY_PAGE}",
-            file=sys.stderr,
-        )
-        return 1
-
-    key = key.strip()
-    if key.lower() in PLACEHOLDERS:
-        print("That is not a key.", file=sys.stderr)
+    key = obtain_key(args.key)
+    if key is None:
         return 1
 
     if args.check:

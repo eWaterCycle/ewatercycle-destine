@@ -118,9 +118,7 @@ def test_derived_variables_pull_in_what_they_need(tmp_path, rhine, opened_stores
 
 
 @pytest.mark.parametrize("variable", ["rsds", "evspsblpot"])
-def test_variant_without_radiation_is_refused(
-    tmp_path, rhine, opened_stores, variable
-):
+def test_variant_without_radiation_is_refused(tmp_path, rhine, opened_stores, variable):
     with pytest.raises(ValueError, match="variant='standard'"):
         DestinELumpedMakkinkForcing.generate(
             start_time=START,

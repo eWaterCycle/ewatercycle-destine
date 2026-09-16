@@ -46,6 +46,9 @@ dev = [
   "ruff",
   "mypy",
   "jupyter",
+  # The notebooks load a .env written by scripts/setup_env.py; the library
+  # itself never reads one.
+  "python-dotenv",
 ]
 
 # This registers the plugin such that it is discoverable by eWaterCycle
