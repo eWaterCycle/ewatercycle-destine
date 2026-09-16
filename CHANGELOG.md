@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-16
+
+### Fixed
+
+- `tests/conftest.py` imported `rhine_shape` from `ewatercycle.testing.fixtures`,
+  which ewatercycle 2.6.0 does not have, so the whole suite aborted during
+  collection. It comes from `ewatercycle.testing`.
+- `spatial_mean()` failed type checking: numpy's stubs type every ufunc as
+  returning `ndarray`, so the cos-latitude weights read as an `ndarray` where
+  `Dataset.weighted()` wants a `DataArray`, even though xarray hands back a
+  `DataArray` at runtime. The weights are built with `DataArray.copy(data=...)`
+  now. Computed values are unchanged.
+- `scripts/setup_env.py` never called its own `obtain_key()`; `main()` carried
+  an inline copy of the same argument-environment-prompt logic, and the two had
+  drifted apart. `main()` calls the helper, which the tests already covered.
+
+### Changed
+
+- `python-dotenv` is in the `dev` extra, so the `.env` the notebooks load
+  actually works after `pip install -e .[dev]`. The library still never reads
+  `.env` itself.
+- Dropped `numpy.typing.mypy_plugin` from the mypy config; it is deprecated as
+  of NumPy 2.3 and numpy ships inline types.
+- Refreshed the HBV forcings notebook, and ran `ruff format` over the scripts,
+  tests and notebooks.
+
 ## [0.1.0] - 2026-09-16
 
 First release. The 0.0.x prototype was never published, so everything below is
@@ -59,5 +85,6 @@ new to anyone installing from PyPI.
   `dest_auth.py`).
 - The unused ECMWF parameter table.
 
-[Unreleased]: https://github.com/eWaterCycle/ewatercycle-destine/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/eWaterCycle/ewatercycle-destine/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/eWaterCycle/ewatercycle-destine/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/eWaterCycle/ewatercycle-destine/releases/tag/v0.1.0
