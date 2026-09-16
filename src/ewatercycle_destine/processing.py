@@ -107,7 +107,10 @@ def spatial_mean(ds: xr.Dataset) -> xr.Dataset:
     Returns:
         The dataset with the two spatial dimensions reduced away.
     """
-    weights = np.cos(np.deg2rad(ds[LAT]))
+    latitudes = ds[LAT]
+    # copy() keeps the coordinate; numpy ufuncs on a DataArray are typed as
+    # returning a bare ndarray, which weighted() will not take.
+    weights = latitudes.copy(data=np.cos(np.deg2rad(latitudes.to_numpy())))
     return ds.weighted(weights).mean(dim=(LAT, LON))
 
 
