@@ -11,7 +11,7 @@ serves.
 ## Prerequisites
 
 A DestinE account with the Data Access Policy upgrade, and an Earth Data Hub
-API key: log in at <https://platform.destine.eu/>, then *Menu → Quota & API Keys*.
+API key: log in at <https://earthdatahub.destine.eu/login>, then *Menu → Quota & API Keys*.
 
 Make the key available in one of two ways:
 
@@ -22,7 +22,7 @@ export EDH_API_KEY=<your-api-key>
 or in `~/.netrc` (`~/_netrc` on Windows), which survives across sessions:
 
 ```
-machine api.earthdatahub.destine.eu
+machine data.earthdatahub.destine.eu
     login edh
     password <your-api-key>
 ```
